@@ -4,7 +4,12 @@
     position: absolute; /*Don't touch*/
     left: 0; /*Don't touch*/
     top: 0; /*Don't touch*/
-    z-index: 1; /*Don't touch*/
+    z-index: 2; /*Don't touch*/
+}
+
+#layer2 {
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.0);
 }
 
 .field {
@@ -15,7 +20,7 @@
     height: 40px;
     width: 70px;
     position: absolute;
-    z-index: 2; /*Don't touch*/
+    z-index: 3; /*Don't touch*/
 }
 
 .menu {
@@ -28,7 +33,7 @@
     align-items: center;
     justify-content: center;
     position: absolute; /*Don't touch*/
-    z-index: 3; /*Don't touch*/
+    z-index: 4; /*Don't touch*/
     cursor: move; /*Don't touch*/
 }
 

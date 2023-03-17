@@ -1,11 +1,14 @@
 //Redrawing agents -> Track if an agent has updated -> Draw
 //Check which method works best for drawing all agents, if chosen -> Rabussys or Maximussys
 // Initialize canvas and context
-let canvas = document.querySelector(".field");
+let canvas = document.getElementById("layer1");
+let canvasLayer2 = document.getElementById("layer2");
 let ctx = canvas.getContext("2d");
+let ctxLayer2 = canvasLayer2.getContext("2d");
 let closeMenu = document.getElementById("close");
 let openMenu = document.getElementById("open");
 let menu = document.querySelector(".menu");
+let startButton = document.getElementById("start");
 //const svgNS = "http://www.w3.org/2000/svg";
 //let svgElement = document.createElementNS(svgNS, "svg");
 
@@ -60,6 +63,9 @@ const canvasWidth = window.innerWidth - window.innerWidth % cellSize;
 const canvasHeight = window.innerHeight - window.innerHeight % cellSize;
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
+
+canvasLayer2.width = canvasWidth;
+canvasLayer2.height = canvasHeight;
 
 // Initizialize array for cells
 const cells = [];
@@ -234,33 +240,57 @@ function populate() {
     }
 
     agents.forEach(agent => {
-        ctx.beginPath();
-        ctx.arc(agent.x, agent.y, agent.fattiness, 0, 2 * Math.PI);
-        ctx.fillStyle = "blue"
-        ctx.fill();
+        ctxLayer2.beginPath();
+        ctxLayer2.arc(agent.x, agent.y, agent.fattiness, 0, 2 * Math.PI);
+        ctxLayer2.fillStyle = "blue"
+        ctxLayer2.fill();
     })
 }
 
-populate();
+//populate();
 
 //Need to delete old agent positions without clearing whole canvas
 function anime() {
+    ctxLayer2.clearRect(0, 0, canvasLayer2.width, canvasLayer2.height);
     agents.forEach(agent => {
-        //ctx.translate(agent.x+5, agent.y+100)
+        /*ctxLayer2.beginPath();
+        ctxLayer2.arc((agent.x), (agent.y), (agent.fattiness * 2), 0, 2 * Math.PI);
+        ctxLayer2.fillStyle = "rgba(0, 0, 0, 0)";
+        ctxLayer2.fill();*/
 
-        ctx.beginPath();
-        ctx.arc((agent.x), (agent.y), agent.fattiness, 0, 2 * Math.PI);
-        ctx.fillStyle = "white";
-        ctx.fill();
+        /*let arithmetic = Math.random();
+        if (arithmetic <= 0.25) {
+            agent.x = (Math.random() + agent.x);
+            agent.y = (Math.random() + agent.y);
 
-        agent.x += 1;
-        agent.y += 1;
-        ctx.beginPath();
-        ctx.arc((agent.x), (agent.y), agent.fattiness, 0, 2 * Math.PI);
-        ctx.fillStyle = "blue"
-        ctx.fill();
+        }
+        else if (arithmetic > 0.25 && arithmetic <= 0.5) {
+            agent.x = (Math.random() + agent.x);
+            agent.y = (Math.random() - agent.y);
+
+        }
+        else if (arithmetic > 0.5 && arithmetic <= 0.75) {
+            agent.x = (Math.random() - agent.x);
+            agent.y = (Math.random() + agent.y);
+        }
+        else {
+            agent.x = (Math.random() - agent.x);
+            agent.y = (Math.random() - agent.y);
+        }*/
+
+        agent.x = (Math.random() + agent.x);
+        agent.y = (Math.random() + agent.y);
+        ctxLayer2.beginPath();
+        ctxLayer2.arc((agent.x), (agent.y), agent.fattiness, 0, 2 * Math.PI);
+        ctxLayer2.fillStyle = "blue"
+        ctxLayer2.fill();
     })
     requestAnimationFrame(anime);
 }
 
-anime();
+startButton.addEventListener("click", function startSimulation() {
+    canvasLayer2.style.zIndex = "10";
+    populate();
+    anime();
+});
+//anime();
