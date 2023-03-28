@@ -163,14 +163,15 @@ function GetNeighbors(cell, cells)
 
     }
 
-    cell.color = "purple"; 
-    cell.rect.setAttribute('fill', cell.color);
-
-    neighbors.forEach(neig => {
-        neig.color = "black";
-        cell.rect.setAttribute('fill', cell.color);
-        setTimeout(500);
-    });
+    //Visualisation of our astar scan
+    //cell.color = "purple"; 
+    //cell.rect.setAttribute('fill', cell.color);
+    // neighbors.forEach(neig => {
+    //     neig.color = "black";
+    //     cell.rect.setAttribute('fill', cell.color);
+    //     setTimeout(500);
+    // });
+    //---------------------------------------------------
     return neighbors;
 }
 
