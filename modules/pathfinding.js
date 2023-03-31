@@ -165,18 +165,26 @@ function handleWall(cell, cells, neighbors, x, y)
         while(0 < amountOfWalls.wallXAmount)
         {
             cells[x][y-amountOfWalls.wallXAmount].f = cells[x][y-amountOfWalls.wallXAmount].f + 10;
+            cells[x][y-amountOfWalls.wallXAmount].color = "red";
+            cells[x][y-amountOfWalls.wallXAmount].rect.setAttribute('fill', cells[x][y-amountOfWalls.wallXAmount].color);
+            
             cells[x][y+amountOfWalls.wallXAmount].f = cells[x][y+amountOfWalls.wallXAmount].f + 10;
             cells[x][y+amountOfWalls.wallXAmount].color = "red";
-            cells[x][y+amountOfWalls.wallXAmount].rect.setAttribute('fill', cells[x][y-amountOfWalls.wallXAmount].color);
+            cells[x][y+amountOfWalls.wallXAmount].rect.setAttribute('fill', cells[x][y+amountOfWalls.wallXAmount].color);
+
             amountOfWalls.wallXAmount--;
         }
 
         while(0 < amountOfWalls.wallYAmount)
         {
+            cells[x-amountOfWalls.wallYAmount][y].f = cells[x-amountOfWalls.wallYAmount][y].f + 10;
+            cells[x-amountOfWalls.wallYAmount][y].color = "red";
+            cells[x-amountOfWalls.wallYAmount][y].rect.setAttribute('fill', cells[x-amountOfWalls.wallYAmount][y].color);
+
             cells[x+amountOfWalls.wallYAmount][y].f = cells[x+amountOfWalls.wallYAmount][y].f + 10;
-            cells[x-amountOfWalls.wallYAmount][y].f + cells[x-amountOfWalls.wallYAmount][y].f + 10;
             cells[x+amountOfWalls.wallYAmount][y].color = "red";
             cells[x+amountOfWalls.wallYAmount][y].rect.setAttribute('fill', cells[x+amountOfWalls.wallYAmount][y].color);
+
             amountOfWalls.wallYAmount--;
         }
     }
@@ -247,13 +255,24 @@ function countWallNeighbors(cells, x, y)
 
     let wallXAmount = 0;
     let wallYAmount = 0;
-    if (wallXNegAmount < wallXPosAmount){
-        wallXAmount = wallXNegAmount;
-    } else {wallXAmount = wallXPosAmount}
 
-    if (wallYNegAmount < wallYPosAmount){
+    if (wallXNegAmount < wallXPosAmount)
+    {
+        wallXAmount = wallXNegAmount;
+    } 
+    else {
+        wallXAmount = wallXPosAmount;
+    }
+
+    if (wallYNegAmount < wallYPosAmount)
+    {
         wallYAmount = wallYNegAmount;
-    } else {wallYAmount = wallYPosAmount}
+    } else {
+        wallYAmount = wallYPosAmount;
+    }
+
+    wallXAmount = wallXAmount-1
+    wallYAmount = wallYAmount-1
     const WallAmount = {wallXAmount, wallYAmount}
     return WallAmount;
 }
