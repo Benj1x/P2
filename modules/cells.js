@@ -1,4 +1,4 @@
-export { createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setAddingExit, setAddingSpawn, getAddingExit, getAddingSpawn, endPoint, startPoint, prevExit, svgNS, getCells, drawTxt}
+export { drawingArea, createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setAddingExit, setAddingSpawn, getAddingExit, getAddingSpawn, endPoint, startPoint, prevExit, svgNS, getCells, drawTxt}
 
 //Custom cell size
 const cellSize = 25;
@@ -82,6 +82,20 @@ function clearCanvas() {
             cell.isExit = false;
             cell.isSpawnPoint = false;
             cell.rect.setAttribute('fill', 'white');
+        });
+    });
+
+    cells.forEach(column => {
+        column.forEach(cell => {
+            let numbering = document.createElementNS(svgNS, "text")
+            numbering.setAttribute('x', cell.x)
+            numbering.setAttribute('y', cell.y+17)
+            numbering.classList.add('svgText');
+            if (cell.isWall){
+            numbering.setAttribute('fill', "white");
+            }
+             numbering.textContent = "";
+             drawingArea.removeChild(numbering)
         });
     });
 }

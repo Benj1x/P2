@@ -1,4 +1,4 @@
-import { drawTxt } from './cells.js'
+import { cellSize, drawTxt, drawingArea, svgNS } from './cells.js'
 
 async function perfMeasure(board, endPoint, startPoint)
 {
@@ -131,31 +131,22 @@ function calculateVectors(cells){
             let neighbors = GetNeighbors(cells[x][y], cells);
 
             let lowest = cells[x][y].f;
-            try{
-                for (let nX = 1; nX < neighbors.length; nX++)
-                { 
+            for (let nX = 1; nX < neighbors.length; nX++)
+            { 
+                if (neighbors[nX]!=undefined)
+                {
                     if (neighbors[nX].f < lowest)
                     {
                         lowest = neighbors[nX].f;
                     }
                 }
-            } catch {
-                for (let nX = 0; nX < neighbors.length; nX++)
-                { 
-                    if (neighbors[nX].f < lowest)
-                    {
-                        lowest = neighbors[nX].f;
-                    }
-                }
-            } finally{
-                
             }
-            
 
-            if (cells[x][y].isWall)
+            if (cells[x][y].isWall && !cells[x][y].visited)
             {
-                handleWall(cells[x][y], cells, neighbors);
+                handleWall(cells[x][y], cells, neighbors, x, y);
             }
+            cells[x][y].visited = true;
 
         }
 
@@ -165,57 +156,146 @@ function calculateVectors(cells){
 
 }
 
-function handleWall(cell, cells, neighbors)
+function handleWall(cell, cells, neighbors, x, y)
 {
-
-    if (isSurrounded(cell, neighbors)){
-
-    }
-
-    for (let x = 0; x < neighbors.length; x++)
+    if (isSurrounded(cell, neighbors, cells))
     {
-        for (let y = 0; y < neighbors[0].length; y++)
+        let amountOfWalls = countWallNeighbors(cells, x, y);
+
+        while(0 < amountOfWalls.wallXAmount)
         {
-            if (neighbors[x][y].isWall){
+            cells[x][y-amountOfWalls.wallXAmount].f = cells[x][y-amountOfWalls.wallXAmount].f + 10;
+            cells[x][y+amountOfWalls.wallXAmount].f = cells[x][y+amountOfWalls.wallXAmount].f + 10;
+            cells[x][y+amountOfWalls.wallXAmount].color = "red";
+            cells[x][y+amountOfWalls.wallXAmount].rect.setAttribute('fill', cells[x][y-amountOfWalls.wallXAmount].color);
+            amountOfWalls.wallXAmount--;
+        }
 
-            }
+        while(0 < amountOfWalls.wallYAmount)
+        {
+            cells[x+amountOfWalls.wallYAmount][y].f = cells[x+amountOfWalls.wallYAmount][y].f + 10;
+            cells[x-amountOfWalls.wallYAmount][y].f + cells[x-amountOfWalls.wallYAmount][y].f + 10;
+            cells[x+amountOfWalls.wallYAmount][y].color = "red";
+            cells[x+amountOfWalls.wallYAmount][y].rect.setAttribute('fill', cells[x+amountOfWalls.wallYAmount][y].color);
+            amountOfWalls.wallYAmount--;
         }
     }
 
+    let testing = drawingArea.querySelectorAll("text");
+    testing.forEach(elm => {
+        drawingArea.removeChild(elm);
+    });
+
+    for (let x = 0; x < cells.length; x++)
+    {
+        for (let y = 0; y < cells[0].length; y++)
+        {
+            drawTxt(cells[x][y], cells[x][y].f);
+        }
+    }
 }
 
-function isSurrounded(cell, neighbors)
+function countWallNeighbors(cells, x, y)
 {
-    // if (neighbors[0][0].isWall && !neighbors[1][1].isWall)
-    // {
-    // }
-
-    if (neighbors[0][0].isWall && neighbors[1][1].isWall)
+    let wallX = x;
+    let wallXPosAmount = 0;
+    let wallXNegAmount = 0;
+    let wallYPosAmount = 0;
+    let wallYNegAmount = 0;
+    let currentIsWall = true;
+    while (currentIsWall)
     {
-        neighbors[0][1].isWall = true;
-        neighbors[1][0].isWall = true;
-
-        neighbors[0][1].color = "red";
-        neighbors[1][0].color = "red";
+        if (cells[wallX][y].isWall){
+            currentIsWall = true;
+            wallX++;
+            wallXPosAmount++;
+        } else { currentIsWall = false;}
+    }
+    
+    wallX = x;
+    currentIsWall = true;
+    while (currentIsWall)
+    {
+        if (cells[wallX][y].isWall){
+            currentIsWall = true;
+            wallX--;
+            wallXNegAmount++;
+        } else { currentIsWall = false;}
     }
 
-    // if (neighbors[0][1].isWall && !neighbors[1][0].isWall)
-    // {
-    // }
-
-    if (neighbors[0][1].isWall && neighbors[1][0].isWall)
+    let wallY = y;
+    currentIsWall = true;
+    while (currentIsWall)
     {
-        neighbors[0][0].isWall = "red";
-        neighbors[1][1].isWall = "red";
+        if (cells[x][wallY].isWall){
+            currentIsWall = true;
+            wallY--;
+            wallYPosAmount++;
+        } else { currentIsWall = false;}
     }
 
+    wallY = y;
+    currentIsWall = true;
+    while (currentIsWall)
+    {
+        if (cells[x][wallY].isWall){
+            currentIsWall = true;
+            wallY--;
+            wallYNegAmount++;
+        } else { currentIsWall = false;}  
+    }
+
+    let wallXAmount = 0;
+    let wallYAmount = 0;
+    if (wallXNegAmount < wallXPosAmount){
+        wallXAmount = wallXNegAmount;
+    } else {wallXAmount = wallXPosAmount}
+
+    if (wallYNegAmount < wallYPosAmount){
+        wallYAmount = wallYNegAmount;
+    } else {wallYAmount = wallYPosAmount}
+    const WallAmount = {wallXAmount, wallYAmount}
+    return WallAmount;
+}
+
+function isSurrounded(cell, neighbors, cells)
+{
+    let hasNeighbor = false;
+    if (neighbors[0].isWall && neighbors[1].isWall)
+    {
+        cell.color = "red";
+        neighbors[0].visited = true;
+        neighbors[1].visited = true;
+        neighbors.forEach(neig => {
+            neig.f = neig.f + 1;
+            
+            cells[neig.x/cellSize][neig.y/cellSize].f == neig.f;
+            //drawTxt(neig, neig.f); 
+        });
+
+        hasNeighbor = true;
+    }
+
+    if (neighbors[2].isWall && neighbors[3].isWall)
+    {
+        neighbors[2].visited = true
+        neighbors[3].visited = true
+        cell.color = "red";
+        neighbors.forEach(neig => {
+            neig.f = neig.f + 1;
+            
+            cells[neig.x/cellSize][neig.y/cellSize].f == neig.f;
+            //drawTxt(neig, neig.f); 
+        });
+        hasNeighbor = true;
+    }
+    
     neighbors.forEach(neig => {
-        neig.color = "red";
         neig.rect.setAttribute('fill', neig.color);
         console.log(neig.x + " " + neig.y);
         setTimeout(500);
     });
-    
+    return hasNeighbor;
 }
 
 function sendMessage(error) {
