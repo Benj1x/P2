@@ -101,7 +101,7 @@ function drawTxt(cell, value) {
     if (cell.isWall){
         numbering.setAttribute('fill', "white");
     }
-    numbering.textContent = Math.round(value);
+    numbering.textContent = value;
     drawingArea.appendChild(numbering)
 }
 
@@ -125,7 +125,8 @@ function createGrid(canvasWidth, canvasHeight) {
                 f: 0,
                 g: 0,
                 h: 0,
-                vh: 0
+                //vector: {VecX, VecY },
+                visited: false
             };
             //Push cell to cells array
             cells[x][y] = cell;
