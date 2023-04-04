@@ -42,14 +42,6 @@ h2 {
     z-index: 2;
 }
 
-.svgText {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-}
-
 .menu {
     width: 160px;
     height: 345px;

@@ -151,7 +151,7 @@ function markCells(cells, currentCell) {
     for (let i = 0; i < currentCell.length; i++) {
         //Update cell if not already marked as updated or wall
         //cell.isWall === true => cell.mark === true
-        if (currentCell[i].mark === false) {
+        if (currentCell[i] != undefined && currentCell[i].mark === false) {
             markCellsController(cells, currentCell[i]);
 
             tempArr = getNeighbors2(cells, currentCell[i]);

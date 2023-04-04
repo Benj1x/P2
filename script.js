@@ -2,6 +2,7 @@ import { initCellValues, setEssenVariables, perfMeasure } from './modules/pathfi
 import { addSpawnArea, getSpawnArea, populate, removeAgentsFromArea, anime } from './modules/agents.js';
 import { createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setAddingExit, setAddingSpawn, getAddingExit, getAddingSpawn, endPoint, startPoint, prevExit, getCells } from './modules/cells.js';
 
+
 //Initialize DOM elements
 const closeMenu = document.querySelector("#close");
 const openMenu = document.querySelector("#open");
@@ -174,10 +175,13 @@ startSim.addEventListener("click", function () {
 //Define canvas parameters and setting svg attributes
 const canvasWidth = window.innerWidth - window.innerWidth % cellSize;
 const canvasHeight = window.innerHeight - window.innerHeight % cellSize;
+drawingArea.setAttribute('viewBox', `0 0 ${canvasWidth} ${canvasHeight}`);
 drawingArea.setAttribute('width', canvasWidth);
 drawingArea.setAttribute('height', canvasHeight);
 
+
 createGrid(canvasWidth, canvasHeight);
+
 
 //
 //
