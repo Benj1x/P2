@@ -1,7 +1,7 @@
 export { createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setAddingExit, setAddingSpawn, getAddingExit, getAddingSpawn, endPoint, startPoint, prevExit, svgNS, getCells, drawTxt}
 
 //Custom cell size
-const cellSize = 25;
+const cellSize = 100;
 //Initialize 2d array for cells
 let cells = [[]];
 //Initialization of variables needed for adding spawn / exit cells

@@ -1,3 +1,4 @@
+import { getSpawnArea } from './agents.js';
 import { cellSize, drawTxt, getCellIndex } from './cells.js'
 
 async function perfMeasure(cells, goal, spawn) {
@@ -8,8 +9,15 @@ async function perfMeasure(cells, goal, spawn) {
     let initCellsArray = [];
     initCellsArray[0] = goal;
     let cellsArray = [];
+
     cellsArray = setArray(cells, initCellsArray);
     markCells(cells, cellsArray);
+
+    let spawnCount = getSpawnArea().length;
+
+    if (hitSpawnCells != spawnCount){
+        alert("Not all spawn areas can reach the end point(s)!");
+    }
 
     //calcVectorField(cells);
 
@@ -32,7 +40,7 @@ async function initCellValues(cells, goal, startpoint) {
         }
     }
 }
-
+let hitSpawnCells = 0;
 let pCanvasWidth = 0;
 let pCanvasHeight = 0;
 let pCellSize = 0;
@@ -40,8 +48,9 @@ let pCellSize = 0;
 function setEssenVariables(Width, Height, Size) {
     pCanvasHeight = Height;
     pCanvasWidth = Width;
-    pCellSize = Size;
+    pCellSize = Size;   
 }
+
 
 function getNeighbors(cell, cells) {
     let neighbors = [];
@@ -176,6 +185,13 @@ function markCells(cells, currentCell) {
 function markCellsController(cells, currentCell) {
     cells[currentCell.x / pCellSize][currentCell.y / pCellSize].value = distVal;
     drawTxt(cells[currentCell.x / pCellSize][currentCell.y / pCellSize], distVal);
+    
+    let cell = cells[currentCell.x / pCellSize][currentCell.y / pCellSize]
+
+    if (cell.color == "blue")
+    {
+        hitSpawnCells++;
+    } 
     cells[currentCell.x / pCellSize][currentCell.y / pCellSize].mark = true;
     currentCell.mark = true;
 }
@@ -244,8 +260,10 @@ function calculateVectors(cells) {
             let lowestCells = neighbors.filter(function (obj) {
                 return obj.value === lowestCost;
             });
+            console.log("checked cell " + currentCellIndex.x + " " + currentCellIndex.y + " lowest cell length " + lowestCells.length);
 
-            if (lowestCells.length == 2) {
+            //Checking for 3 lowest cells, in the case that 2 paths from goal are equal in distance
+            if (lowestCells.length === 3 || lowestCells.length === 2) {
                 let cell1Index = getCellIndex(lowestCells[0].x, lowestCells[0].y)
                 let cell2Index = getCellIndex(lowestCells[1].x, lowestCells[1].y)
                 let vector1 = { x: cell1Index.x - currentCellIndex.x, y: cell1Index.y - currentCellIndex.y }
@@ -255,13 +273,27 @@ function calculateVectors(cells) {
                 cell.dVector.x = x;
                 cell.dVector.y = y;
                 console.log("vectors" + cell.dVector.x + " " + cell.dVector.y);
-            } else if (lowestCells.length == 1) {
+                console.log("current cell info " + currentCellIndex.x + " " + currentCellIndex.y);
+            } else if (lowestCells.length === 1) {
                 let cellVector = getCellIndex(lowestCells[0].x, lowestCells[0].y)
                 let x = cellVector.x-currentCellIndex.x
                 let y = cellVector.y - currentCellIndex.y;
                 cell.dVector.x = x;
                 cell.dVector.y = y;
                 console.log("vectors" + cell.dVector.x + " " + cell.dVector.y);
+                console.log("current cell info " + currentCellIndex.x + " " + currentCellIndex.y);
+            }
+
+            //Some cells against walls have zero-vectors, stopping movement
+            //Assigns movement to the agents nonetheless, as these cells can be accessible in some rare cases
+            if (cell.dVector.x === 0 && cell.dVector.y === 0) {
+                let cellVector = getCellIndex(lowestCells[0].x, lowestCells[0].y)
+                let x = cellVector.x-currentCellIndex.x
+                let y = cellVector.y - currentCellIndex.y;
+                cell.dVector.x = x;
+                cell.dVector.y = y;
+                console.log("vectors" + cell.dVector.x + " " + cell.dVector.y);
+                console.log("current cell info " + currentCellIndex.x + " " + currentCellIndex.y);
             }
         }
     });
