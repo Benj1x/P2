@@ -47,11 +47,10 @@ class Agent {
             y, 
             width: fattiness,
             height: fattiness,
-            topLeft: 0, 
-            topRight: 0,
-            bottomRight: 0,
-            bottomLeft: 0,
-            middle: fattiness/2
+            top: 0, 
+            right: 0,
+            bottom: 0,
+            left: 0 
         }
 
        // drawingArea.appendChild(this.rect);
@@ -66,14 +65,11 @@ class Agent {
         xyTransform.setTranslate(this.x, this.y);
         this.body.transform.baseVal[0] = xyTransform;
 
-        // this.square.left = x/(canvasWidth / cellSize);
-        // this.square.top = y/(canvasHeight / cellSize);
-        // this.square.right = this.square.left + this.fattiness;
-        // this.square.bottom = this.square.top + this.fattiness;
-        this.square.topLeft = x;
-        this.square.topRight = y;
-        this.square.bottomRight = x + this.fattiness;
-        this.square.bottomLeft = y + this.fattiness;
+        this.square.left = x/(canvasWidth / cellSize);
+        this.square.top = y/(canvasHeight / cellSize);
+        this.square.right = this.square.left + this.fattiness;
+        this.square.bottom = this.square.top + this.fattiness;
+
     }
     updateAgentCell(){
         let cellX = Math.floor(this.x / cellSize);
@@ -158,42 +154,13 @@ function getAgentsToTestAgainst(agent){
         right: 0,
         bottom: 0
     }
-    // selectionRectangle.right = agent.square.right;
-    // selectionRectangle.bottom = agent.square.bottom;
-    // selectionRectangle.top = agent.square.top;
-    // selectionRectangle.left = agent.square.left;
-    //selectBoxes(selectionRectangle);
-
-
-    selectionRectangle.right = agent.x+agent.fattiness;
-    selectionRectangle.left = agent.x;
-    selectionRectangle.top = agent.y;
-    selectionRectangle.bottom = agent.y+agent.fattiness;
+    selectionRectangle.right = agent.square.right;
+    selectionRectangle.bottom = agent.square.bottom;
+    selectionRectangle.top = agent.square.top;
+    selectionRectangle.left = agent.square.left;
 
     testCollision(getAgents(), selectionRectangle, agent);
-    // let myCellX = agent.myCell.x/cellSize;
-    // let myCellY = agent.myCell.y/cellSize;
-
-    // const neighbors = getNeighborCells(myCellX, myCellY);
-
-    // let agentsToTest = [];
-
-    // neighbors.forEach(cell => {
-
-    //     let cellAgents = getAgentsInCell(cell);
-
-    //     cellAgents.forEach(cellAgent => {
-    //         agentsToTest.push(cellAgent);            
-    //     });
-        
-    // });
     
-    // let cellAgents = getAgentsInCell(this.myCell);
-    // cellAgents.forEach(cellAgent => {
-    //     agentsToTest.push(cellAgent);            
-    // });
-
-    // return agentsToTest;
 
 }
 
@@ -201,18 +168,21 @@ function testCollision(inputAgents, agentRectangle, testingAgent) {
     let collidingAgents = [];
     inputAgents.forEach(function(agent) {
       let box = agent.square;
-        if (agent.myNumber != testingAgent.myNumber) 
+  
+      if (
+        agentRectangle.left <= box.left &&
+        agentRectangle.top <= box.top &&
+        agentRectangle.right >= box.right &&
+        agentRectangle.bottom >= box.bottom
+      ) {
+        if (agent.myNumber != testingAgent.myNumber)
         {
-            if (isOverlapping(agent.square, testingAgent.square)) 
-            {
-                agent.body.setAttribute('fill', 'green');
-                collidingAgents.push(agent);
-            } else {agent.body.setAttribute('fill', 'black');}
-        } 
-      
+            agent.body.setAttribute('fill', 'green');
+            collidingAgents.push(agent);
+        }
         //agent.body.setAttribute('fill', 'green');
         //collidingAgents.push(agent);
-      
+      } else {agent.body.setAttribute('fill', 'black');;}
     });
 
     console.log("Found: " + collidingAgents.length);
@@ -223,30 +193,7 @@ function testCollision(inputAgents, agentRectangle, testingAgent) {
     
 
     return collidingAgents;
-}
-
-function isOverlapping(collidingPoints, testerPoints){
-    //if top left point is within the tester
-    if (testerPoints.topLeft <= collidingPoints.bottomRight && collidingPoints.topLeft <= testerPoints.topLeft) {
-        return true;
-    } //else console.log(testerPoints.bottomRight + "," + collidingPoints.topLeft + " && " + collidingPoints.topLeft + "," + testerPoints.topLeft)
-    //if top right point is within the tester
-    if (testerPoints.bottomRight <= collidingPoints.topRight && collidingPoints.topRight <= testerPoints.topLeft) {
-        return true;
-    }
-
-    //if bottom left point is within the tester
-    if (testerPoints.bottomRight <= collidingPoints.bottomLeft && collidingPoints.bottomLeft <= testerPoints.topLeft) {
-        return true;
-    }
-    
-    //if bottom right point is within the tester
-    if (testerPoints.bottomRight <= collidingPoints.bottomRight && collidingPoints.bottomRight <= testerPoints.topLeft) {
-        return true;
-    }
-
-    return false;
-}
+  }
 
 //Drawing calculated amount of agents in each spawn area
 function populateCells(area, agentsPerArea) {
