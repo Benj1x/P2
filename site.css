@@ -172,20 +172,26 @@ button:active {
     color: #ff6ec7;
 }
 
-.unicorn {
+.kawaiipicture {
     position: absolute;
-    z-index: 100;
+    z-index: 1;
 }
 
-.animate {
+.animate-raining {
     animation-duration: 2s;
-    animation-name: unicorn-flyaway;
+    animation-name: unicorn-raining;
     animation-timing-function: ease-out;
     animation-delay: var(--animation-delay, 0s);
 }
 
+/*.animate-flying-away {
+    animation-duration: 2s;
+    animation-name: unicorn-flyaway;
+    animation-timing-function: ease-out;
+    animation-delay: var(--animation-delay, 0s);
+}*/
 
-@keyframes unicorn-flyaway {
+@keyframes unicorn-raining {
     0% {
         top: -20%;
         left: var(-20%, --start-left);
@@ -199,4 +205,19 @@ button:active {
         transform: translate(-50%, 200%) rotate(720deg);
     }
 }
+
+/*@keyframes unicorn-flyaway {
+    0% {
+        top: -20%;
+        left: var(-20%, --start-left);
+        transform: translate(-50%, 0) rotate(0deg);
+    }
+
+    100% {
+        top: 120%;
+        left: var(-20%, --start-left);
+        opacity: 0;
+        transform: translate(-50%, 200%) rotate(720deg);
+    }
+}*/
 

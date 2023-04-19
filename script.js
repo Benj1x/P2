@@ -111,7 +111,7 @@ menu.addEventListener("mouseup", function () {
 });
 
 closeMenu.addEventListener("click", function () {
-    uniAnimate();
+    callAnimations();
 
     isMouseDown = false;
     menuHidden = true;
@@ -136,7 +136,8 @@ openMenu.addEventListener("mouseup", function () {
         openMenu.style.visibility = "hidden";
         menu.style.visibility = "visible";
     } 
-    uniAnimate();
+
+    callAnimations();
 });
 
 // Add event to "Clear"-button
@@ -210,6 +211,8 @@ startSim.addEventListener("click", function () {
         alert("Missing a exit point!");
         return;
     }
+
+    callAnimations();
 
     setEssenVariables(canvasWidth, canvasHeight, cellSize);
     perfMeasure(getCells(), endPoint, startPoint);
@@ -481,7 +484,7 @@ function createPicture() {
         <img src="resources/${Pictures[randomIndex]}" alt="Rainbow Unicorn" width="150px" height="150px">
     `;
     
-    unicornElement.classList.add("unicorn");
+    unicornElement.classList.add("kawaiipicture");
     unicornElement.style.top = `${Math.floor(Math.random() * -200)}px`;
     unicornElement.style.left = `${Math.floor(Math.random() * window.innerWidth)}px`;
     unicornElement.style.visibility = "visible";
@@ -500,7 +503,7 @@ function uniAnimate() {
         const animationDelay = Math.floor(Math.random() * 1000);
         unicorn.style.setProperty("--animation-delay", `${animationDelay}ms`);
 
-        unicorn.classList.add("animate");
+        unicorn.classList.add("animate-raining");
 
         unicorn.style.opacity = "1";
 
@@ -508,10 +511,43 @@ function uniAnimate() {
 
         setTimeout(function () {
             unicorn.style.visibility = "hidden";
-            unicorn.classList.remove("animate");
+            unicorn.classList.remove("animate-raining");
             document.body.removeChild(unicorn);
         }, 10000);
     }
+}
+
+/*function rainbowAnimate(){
+    const numberOfRainbows = Math.floor(Math.random() * 50) + 25;
+
+    const Pictures = ["nyancatuwu.png"];
+
+    for (let i = 0; i < numberOfRainbows; i++) {
+        const rainbow = createPicture(Pictures);
+        document.body.appendChild(rainbow);
+
+        //rainbow.style.transform = `translate(${-10000}px, ${-10000}px)`;
+
+        const animationDelay = Math.floor(Math.random() * 1000);
+        rainbow.style.setProperty("--animation-delay", `${animationDelay}ms`);
+
+        rainbow.classList.add("animate-fying-away");
+
+        rainbow.style.opacity = "1";
+
+        rainbow.style.visibility = "visible";
+
+        setTimeout(function () {
+            rainbow.style.visibility = "hidden";
+            rainbow.classList.remove("animate-flying-away");
+            document.body.removeChild(rainbow);
+        }, 10000);
+    }
+}*/
+
+function callAnimations(){
+    uniAnimate();
+    //rainbowAnimate();
 }
 
 
