@@ -7,23 +7,28 @@
     <script type="module" src="script.js"></script>
     <button id="open" style="visibility: visible">Open Menu</button>
     <div class="menu" style="visibility: hidden;">
-        <button id="agentsButton">Agents</button>
-        <button id="addExit">Add Exit</button>
-        <button id="clear">Clear</button>
-        <button id="toggleDisplay">Toggle</button>
         <button id="start">Start simulation</button>
+        <hr>
+        <button id="agentsButton">Agents</button>
+        <button id="gridsButton">Grids</button>
+        <button id="toggleDisplay">Toggle</button>
         <button id="close">Close Menu</button>
-        <div id="agentsSubmenu" style="display: none">
+        <div class="Submenu" id="agentsSubmenu" style="display: none">
             <label for="numAgents">Number of Agents:</label>
             <input type="number" id="numAgents" min="1" max="10" value="1">
-            <button id="spawnButton">Spawn</button>
-            <button id="removeButton">Remove</button>
-            <button id="addSpawn">Add Spawn</button>
             <button id="populate">Populate</button>
+            <button id="removeButton">Remove</button>
+        </div>
+        <div class="Submenu" id="gridsSubmenu" style="display: none">
+            <button id="addSpawn">Add Spawn</button>
+            <button id="addExit">Add Exit</button>
+            <button id="clear">Clear</button>
         </div>
     </div>  
+
     <div class="container">
         <svg class="drawing"></svg>
     </div>
 </body>
+
 </html>

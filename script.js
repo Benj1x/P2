@@ -4,8 +4,8 @@ import { createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setA
 
 
 //Initialize DOM elements
-const closeMenu = document.querySelector("#close");
 const openMenu = document.querySelector("#open");
+const closeMenu = document.querySelector("#close");
 const startSim = document.querySelector("#start");
 const numAgents = document.querySelector("#numAgents");
 const menu = document.querySelector(".menu");
@@ -17,9 +17,11 @@ const addExitButton = document.querySelector("#addExit");
 const addSpawnButton = document.querySelector("#addSpawn");
 
 const toggleAgentsSubmenu = document.querySelector("#agentsButton");
-const spawnButton = document.querySelector("#spawnButton");
+const toggleGridsSubmenu = document.querySelector("#gridsButton");
 const removeButton = document.querySelector("#removeButton");
 let numAgentsInput = document.querySelector("#num-agents");
+
+const unicorn = document.getElementById("unicorn");
 
 //
 //
@@ -40,6 +42,61 @@ popButton.addEventListener("click", populate);
 
 let menuHidden = true;
 
+//Function for resetting the menu position
+function resetMenuPosition(){
+    const menuRect = menu.getBoundingClientRect();
+    const openMenuRect = openMenu.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+
+    if (menuRect.top < 0) {
+        menu.style.top = "0px";
+        openMenu.style.top = "0px";
+    }
+
+    if (menuRect.left < 0) {
+        menu.style.left = "0px";
+        openMenu.style.left = "0px";
+    }
+
+    if (menuRect.bottom > windowHeight) {
+        menu.style.top = (windowHeight - menuRect.height) + "px";
+        openMenu.style.top = (windowHeight - menuRect.height) + "px";
+    }
+
+    if (menuRect.right > windowWidth) {
+        menu.style.left = (windowWidth - menuRect.width) + "px";
+        openMenu.style.left = (windowWidth - menuRect.width) + "px";
+    }
+}
+
+//Event listener for mouse moving over the window
+window.addEventListener("mousemove", function (event) {
+    //Checking if the primary mouse button is NOT pressed and updating the isMouseDown variable accordingly.
+    //event.buttons {1 == primary, 2 == secondary, 4 == auxiliary(middle)}
+    if (event.buttons !== 1) {
+        isMouseDown = false;
+    }
+
+    cursorNewX = cursorCurrentX - event.clientX;
+    cursorNewY = cursorCurrentY - event.clientY;
+    if ((cursorCurrentX !== cursorNewX || cursorCurrentY !== cursorNewY) && isMouseDown === true) {
+        isDraggingOverlay = true;
+        cursorCurrentX = event.clientX;
+        cursorCurrentY = event.clientY;
+        menu.style.left = (menu.offsetLeft - cursorNewX) + "px";
+        menu.style.top = (menu.offsetTop - cursorNewY) + "px";
+        openMenu.style.left = (menu.offsetLeft - cursorNewX) + "px";
+        openMenu.style.top = (menu.offsetTop - cursorNewY) + "px";
+
+        // Call the resetMenuPosition function
+        resetMenuPosition();
+    } else {
+        isDraggingOverlay = false;
+    }
+});
+
+
 //Event listeners for menu open / close / drag / clear / spawn / exit
 menu.addEventListener("mousedown", function (event) {
     isMouseDown = true;
@@ -54,6 +111,8 @@ menu.addEventListener("mouseup", function () {
 });
 
 closeMenu.addEventListener("click", function () {
+    uniAnimate();
+
     isMouseDown = false;
     menuHidden = true;
     if (isDraggingOverlay === false) {
@@ -70,20 +129,6 @@ openMenu.addEventListener("mousedown", function (event) {
     cursorCurrentY = event.clientY;
 });
 
-document.addEventListener("mousemove", function (event) {
-        cursorNewX = cursorCurrentX - event.clientX;
-        cursorNewY = cursorCurrentY - event.clientY;
-        if ((cursorCurrentX !== cursorNewX || cursorCurrentY !== cursorNewY) && isMouseDown === true) {
-            isDraggingOverlay = true;
-            cursorCurrentX = event.clientX;
-            cursorCurrentY = event.clientY;
-            menu.style.left = (menu.offsetLeft - cursorNewX) + "px";
-            menu.style.top = (menu.offsetTop - cursorNewY) + "px";
-            openMenu.style.left = (menu.offsetLeft - cursorNewX) + "px";
-            openMenu.style.top = (menu.offsetTop - cursorNewY) + "px";
-        }
-});
-
 openMenu.addEventListener("mouseup", function () {
     isMouseDown = false;
     if (isDraggingOverlay === false) {
@@ -91,6 +136,7 @@ openMenu.addEventListener("mouseup", function () {
         openMenu.style.visibility = "hidden";
         menu.style.visibility = "visible";
     } 
+    uniAnimate();
 });
 
 // Add event to "Clear"-button
@@ -119,8 +165,14 @@ toggleAgentsSubmenu.addEventListener("click", function () {
     }
 });
 
-spawnButton.addEventListener("click", function () {
-    populate();
+//Event listerns for grids submenu
+toggleGridsSubmenu.addEventListener("click", function () {
+    let submenu = document.querySelector("#gridsSubmenu");
+    if (submenu.style.display === "none") {
+        submenu.style.display = "block";
+    } else {
+        submenu.style.display = "none";
+    }
 });
 
 removeButton.addEventListener("click", function () {
@@ -243,6 +295,10 @@ drawingArea.addEventListener("mousedown", (event) => {
 });
 
 drawingArea.addEventListener("mousemove", (event) => {
+    if (event.buttons !== 1) {
+        isDragging = false;
+    }
+
     if (getAddingSpawn() && isDragging) {
         let nextIndex = getCellIndex(event.offsetX, event.offsetY);
         if (prevIndex.x != nextIndex.x || prevIndex.y != nextIndex.y) {
@@ -414,6 +470,54 @@ drawingArea.addEventListener("mouseup", (event) => {
         addSpawnArea(spawnGroup);
     }
 });
+
+function createUnicorn() {
+    const unicornElement = document.createElement("div");
+    unicornElement.style.position = "absolute";
+    unicornElement.innerHTML = `
+        <img src="resources/unicorn.png" alt="Rainbow Unicorn" width="150px" height="150px">
+    `;
+    unicornElement.classList.add("unicorn");
+    unicornElement.style.top = `${Math.floor(Math.random() * -200)}px`;
+    unicornElement.style.left = `${Math.floor(Math.random() * window.innerWidth)}px`;
+    unicornElement.style.visibility = "visible";
+    return unicornElement;
+}
+
+function uniAnimate() {
+    const numberOfUnicorns = Math.floor(Math.random() * 50) + 25;
+
+    for (let i = 0; i < numberOfUnicorns; i++) {
+        const unicorn = createUnicorn();
+        document.body.appendChild(unicorn);
+
+        unicorn.style.transform = `translate(${-10000}px, ${-10000}px)`;
+
+        const animationDelay = Math.floor(Math.random() * 1000);
+        unicorn.style.setProperty("--animation-delay", `${animationDelay}ms`);
+
+        unicorn.classList.add("animate");
+
+        unicorn.style.opacity = "1";
+
+        unicorn.style.visibility = "visible";
+
+        setTimeout(function () {
+            unicorn.style.visibility = "hidden";
+            unicorn.classList.remove("animate");
+            document.body.removeChild(unicorn);
+        }, 10000);
+    }
+}
+
+
+
+
+
+
+
+
+  
 
 
 //
