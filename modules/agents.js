@@ -182,7 +182,7 @@ function testCollision(inputAgents, agentRectangle, testingAgent) {
         }
         //agent.body.setAttribute('fill', 'green');
         //collidingAgents.push(agent);
-      } else {agent.body.setAttribute('fill', 'black');;}
+      } //else {agent.body.setAttribute('fill', 'black');;}
     });
 
     console.log("Found: " + collidingAgents.length);
