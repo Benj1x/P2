@@ -471,12 +471,16 @@ drawingArea.addEventListener("mouseup", (event) => {
     }
 });
 
-function createUnicorn() {
+function createPicture() {
+    const Pictures = ["Unicorn1.png", "Unicorn2.jpeg", "Unicorn3.png", "stars2.png"];
+
     const unicornElement = document.createElement("div");
     unicornElement.style.position = "absolute";
+    const randomIndex = Math.floor(Math.random() * Pictures.length);
     unicornElement.innerHTML = `
-        <img src="resources/unicorn.png" alt="Rainbow Unicorn" width="150px" height="150px">
+        <img src="resources/${Pictures[randomIndex]}" alt="Rainbow Unicorn" width="150px" height="150px">
     `;
+    
     unicornElement.classList.add("unicorn");
     unicornElement.style.top = `${Math.floor(Math.random() * -200)}px`;
     unicornElement.style.left = `${Math.floor(Math.random() * window.innerWidth)}px`;
@@ -488,7 +492,7 @@ function uniAnimate() {
     const numberOfUnicorns = Math.floor(Math.random() * 50) + 25;
 
     for (let i = 0; i < numberOfUnicorns; i++) {
-        const unicorn = createUnicorn();
+        const unicorn = createPicture();
         document.body.appendChild(unicorn);
 
         unicorn.style.transform = `translate(${-10000}px, ${-10000}px)`;
