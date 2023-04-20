@@ -101,14 +101,14 @@ class Agent {
 
         this.myCell = currentCell;
         this.myCell.agents.push(this);
-        getAgentsToTestAgainst(this);
+        //getAgentsToTestAgainst(this);
     }
     getAgentCell() {
         return this.myCell;
     }
     destroy() {
-        let myHTML = document.elementFromPoint(this.x, this.y);
-        myHTML.remove(); //sometimes crashes
+        //let myHTML = document.elementFromPoint(this.x, this.y);
+        //myHTML.remove(); //sometimes crashes
 
         //remove from agent array
         let me = agents.find(agent => agent.myNumber === this.myNumber);
@@ -346,13 +346,26 @@ function anime(start) {
         i++;
     }
     let end = performance.now();
-    //console.log(`Execution time: ${end - start} ms`);
+    console.log(`Execution time: ${end - start} ms`);
     requestAnimationFrame(animateCaller);
 
 }
 
 function collisionCheck(x, y, currAgent, newCell) {
-    let agentCollision = agents.some((agent) => Math.abs(agent.x - x) < agent.fattiness + currAgent.fattiness && Math.abs(agent.y - y) < agent.fattiness + currAgent.fattiness && agent.x != currAgent.x && agent.y != currAgent.y)
+    let neighbors=[];
+    let currentCell = getCell(Math.floor(currAgent.x/cellSize), Math.floor(currAgent.y/cellSize));
+
+    neighbors = getNeighborCells(currentCell.x/cellSize, currentCell.y/cellSize);
+
+    neighbors.push(currentCell);
+
+    let nearAgents = []; 
+
+    neighbors.forEach(neigh => {
+        nearAgents = getAgentsInCell(neigh);
+    });
+
+    let agentCollision = nearAgents.some((agent) => Math.abs(agent.x - x) < agent.fattiness + currAgent.fattiness && Math.abs(agent.y - y) < agent.fattiness + currAgent.fattiness && agent.x != currAgent.x && agent.y != currAgent.y)
     let cellCollision = newCell.isWall
     if (agentCollision || cellCollision) {
         return true
