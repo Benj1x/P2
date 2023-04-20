@@ -156,24 +156,33 @@ addSpawnButton.addEventListener("click", () => {
     setAddingSpawn(true);
 });
 
+//Event to change the state of the submenu
+function toggleSubmenu(submenuName) {
+    const submenus = ["agentsSubmenu", "gridsSubmenu"];
+  
+    submenus.forEach((submenu) => {
+      if (submenu !== submenuName) {
+        const otherSubmenu = document.querySelector(`#${submenu}`);
+        otherSubmenu.style.display = "none";
+      }
+    });
+  
+    let submenu = document.querySelector(`#${submenuName}`);
+    if (submenu.style.display === "none") {
+      submenu.style.display = "block";
+    } else {
+      submenu.style.display = "none";
+    }
+  }  
+
 //Event listeners for agents submenu
 toggleAgentsSubmenu.addEventListener("click", function () {
-    let submenu = document.querySelector("#agentsSubmenu");
-    if (submenu.style.display === "none") {
-        submenu.style.display = "block";
-    } else {
-        submenu.style.display = "none";
-    }
+    toggleSubmenu("agentsSubmenu");
 });
 
 //Event listerns for grids submenu
 toggleGridsSubmenu.addEventListener("click", function () {
-    let submenu = document.querySelector("#gridsSubmenu");
-    if (submenu.style.display === "none") {
-        submenu.style.display = "block";
-    } else {
-        submenu.style.display = "none";
-    }
+    toggleSubmenu("gridsSubmenu");
 });
 
 removeButton.addEventListener("click", function () {
