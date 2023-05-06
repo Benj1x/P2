@@ -318,14 +318,15 @@ function anime(start) {
             if (newX < 0) {
                 newX = 0;
             }
+            let agentweight = 0.3
             if (!agents[i].prevCell2.x) {
                 agents[i].prevCell2.x = Math.floor(newX / cellSize)
                 agents[i].prevCell2.y = Math.floor(newY / cellSize)
-                cells[Math.floor(newX / cellSize)][Math.floor(newY / cellSize)].value += 1
+                cells[Math.floor(newX / cellSize)][Math.floor(newY / cellSize)].value += agentweight
             } else if (agents[i].prevCell2.x != Math.floor(newX / cellSize) || agents[i].prevCell2.y != Math.floor(newY / cellSize)) {
-                cells[agents[i].prevCell2.x][agents[i].prevCell2.y].value -= 1
+                cells[agents[i].prevCell2.x][agents[i].prevCell2.y].value -= agentweight
                 if (!cells[Math.floor(newX / cellSize)][Math.floor(newY / cellSize)].isExit) {
-                    cells[Math.floor(newX / cellSize)][Math.floor(newY / cellSize)].value += 1
+                    cells[Math.floor(newX / cellSize)][Math.floor(newY / cellSize)].value += agentweight
                 }
 
                 agents[i].prevCell2 = { x: Math.floor(newX / cellSize), y: Math.floor(newY / cellSize) }
