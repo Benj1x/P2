@@ -318,7 +318,7 @@ function anime(start) {
             if (newX < 0) {
                 newX = 0;
             }
-            let agentweight = 0.3
+            let agentweight = 0.5
             if (!agents[i].prevCell2.x) {
                 agents[i].prevCell2.x = Math.floor(newX / cellSize)
                 agents[i].prevCell2.y = Math.floor(newY / cellSize)
