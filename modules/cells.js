@@ -275,26 +275,26 @@ function getCells() { return cells; }
 */
 function getCell(x, y) { return cells[x][y]; }
 
-function setAddingExit(isAdding) { addingExit = isAdding; addingSpawn = false };
+function setAddingExit(isAdding) { addingExit = isAdding; addingSpawn = false; };
 function setAddingSpawn(isAdding) { addingSpawn = isAdding; addingExit = false; };
 
 function getNeighborCells(x, y) {
     let cell = getCell(x, y);
     let neighbors = [];
     //Get x neighbors
-    if (cell.x != 0) {
+    if (cell.x !== 0) {
         neighbors.push(cells[(cell.x / cellSize) - 1][cell.y / cellSize]);
     }
 
-    if (cell.y != 0) {
+    if (cell.y !== 0) {
         neighbors.push(cells[cell.x / cellSize][(cell.y / cellSize) - 1]);
     }
 
-    if (cell.x != cells[cells.length - 1][cells[0].length - 1].x) {
+    if (cell.x !== (cells.length-1) * cellSize) {
         neighbors.push(cells[(cell.x / cellSize) + 1][cell.y / cellSize]);
     }
 
-    if (cell.y != cells[0][cells[0].length - 1].y) {
+    if (cell.y !== (cells[0].length - 1) * cellSize) {
         neighbors.push(cells[cell.x / cellSize][(cell.y / cellSize) + 1]);
     }
 

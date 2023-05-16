@@ -131,7 +131,7 @@ class Agent {
         this.myCell.agents.splice(index, 1);
 
         this.myCell = currentCell;
-        this.myCell.agents.push(this.myNumber);
+        this.myCell.agents.push(this);
 
         //console.log("added agent: " + this.myNumber + " to cell: " + this.myCell.x + " + " + this.myCell.y);
 
@@ -150,14 +150,15 @@ class Agent {
         //agents[index] == null;
         //console.log(agents.length);
         agents.splice(index, 1);
+        //update all agents after this agent in the array
         for (let i = index; i < agents.length; i++) {
             if (agents[i].myCell != null) { // Add null check here
-                let me = agents[i].myCell.agents.find(agent => agent == agents[i].myNumber);
-                let index = agents[i].myCell.agents.indexOf(me);
+                let cellMe = agents[i].myCell.agents.find(agent => agent == agents[i].myNumber);
+                let index = agents[i].myCell.agents.indexOf(cellMe);
                 agents[i].myCell.agents.splice(index, 1);
                 agents[i].myNumber = i + 1;
                 agents[i].myCell.agents.push(agents[i].myNumber);
-                agents[i].notifyCell(agents[i].myCell.x / cellSize, agents[i].myCell.y / cellSize,);
+                agents[i].notifyCell(agents[i].myCell.x / cellSize, agents[i].myCell.y / cellSize);
             }
         }
         //remove from cell (avoid collision check)
@@ -448,25 +449,39 @@ function anime(start) {
 }
 
 function collisionCheck(x, y, currAgent, newCell) {
-    // let neighbors = [];
-    // let currentCell = getCell(Math.floor(currAgent.x / cellSize), Math.floor(currAgent.y / cellSize));
 
-    // neighbors = getNeighborCells(currentCell.x / cellSize, currentCell.y / cellSize);
+    let currentCell = getCell(Math.floor(currAgent.x / cellSize), Math.floor(currAgent.y / cellSize));
 
-    //neighbors.push(getCell(currentCell.x  / cellSize, currentCell.y / cellSize));
+    let neighbors = getNeighborCells(currentCell.x / cellSize, currentCell.y / cellSize);
 
-    // let nearAgents = [];
+    neighbors.push(getCell(currentCell.x  / cellSize, currentCell.y / cellSize));
 
-    // neighbors.forEach(neigh => {
-    //     nearAgents = getAgentsInCell(neigh);
-    // });
+    let nearAgents = [];
+
+    neighbors.forEach(neigh => {
+        let agentsInCell = getAgentsInCell(neigh); // Assuming it returns an array of agent indices
+        agentsInCell.forEach(agentIndex => {
+            nearAgents.push(agents[agentIndex.myNumber-1]);
+        });
+    });
 
     //Could make a check for cell.agents.length
     //Too high density could enable smaller min distances, such as an inner square in agent
 
-    //let agentCollision = nearAgents.some((agent) => Math.abs(agents[agent-1].x - x) < agents[agent-1].fattiness + currAgent.fattiness && Math.abs(agents[agent-1].y - y) < agents[agent-1].fattiness + currAgent.fattiness && agents[agent-1].x != currAgent.x && agents[agent-1].y != currAgent.y)
-    let agentCollision = agents.some((agent) => Math.abs(agent.x - x) < agent.fattiness + currAgent.fattiness && Math.abs(agent.y - y) < agent.fattiness + currAgent.fattiness && agent.x != currAgent.x && agent.y != currAgent.y)
+    //let agentCollision = agents.some((agent) => Math.abs(agents[agent-1].x - x) < agents[agent-1].fattiness + currAgent.fattiness && Math.abs(agents[agent-1].y - y) < agents[agent-1].fattiness + currAgent.fattiness && agents[agent-1].x != currAgent.x && agents[agent-1].y != currAgent.y)
+    let agentCollision = nearAgents.some((agent) => Math.abs(agent.x - x) < agent.fattiness + currAgent.fattiness && Math.abs(agent.y - y) < agent.fattiness + currAgent.fattiness && agent.x != currAgent.x && agent.y != currAgent.y)
     //    console.log(agentCollision);
+
+    let acollision = false;
+
+    // for (let i = 0; i < nearAgents; i++){
+    //     if (Math.abs(nearAgents[i].x - x) < nearAgents[i].fattiness + currAgent.fattiness && Math.abs(nearAgents[i].y - y) < nearAgents[i].fattiness + currAgent.fattiness){
+    //         if (nearAgents[i].x != currAgent.x && nearAgents[i].y != currAgent.y){
+    //             acollision = true;
+    //         }
+    //     }
+    // }
+    
     let cellCollision = newCell.isWall;
     if (agentCollision || cellCollision) {
         return true
