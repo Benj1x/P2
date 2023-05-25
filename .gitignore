@@ -4,8 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Node stuff
-node_modules/
-package-lock.json
+# node_modules/
+# package-lock.json
 
 # User-specific files
 *.rsuser
@@ -277,7 +277,7 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
-node_modules/
+# node_modules/
 
 # Visual Studio 6 build log
 *.plg
