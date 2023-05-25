@@ -32,7 +32,7 @@ function saveAlreadyExistsForUser(db, userCookie, name){
 
 app.use("/modules", express.static('modules'))
 app.use("/resources", express.static('resources'))
-app.use(express.json({limit: "1500kb"}));
+app.use(express.json({limit: "20000kb"}));
 
 app.get('/script.js', (req, res) => {
     res.sendFile("./script.js", { root: __dirname });

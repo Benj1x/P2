@@ -1,8 +1,14 @@
 export { calculateVectors }
 import { getSpawnAreas } from './agents.js';
-import { cellSize, drawTxt, getCellIndex } from './cells.js'
+import { cellSize, getCellIndex, getCellSize } from './cells.js'
 
-async function perfMeasure(cells, goal, spawn) {
+/**
+ * Used to call the initial BFS and vector calculation to measure performance
+ * @param {cells[]} cells array of cells
+ * @param {cells[]} goal array of goal cells
+ * @returns {void}
+ */
+async function perfMeasure(cells, goal) {
     const start = performance.now();
 
     markCells(cells, goal);
@@ -17,8 +23,6 @@ async function perfMeasure(cells, goal, spawn) {
         return;
     }
 
-    //calcVectorField(cells);
-
     calculateVectors(cells);
 
     const end = performance.now();
@@ -26,32 +30,15 @@ async function perfMeasure(cells, goal, spawn) {
 }
 
 let hitSpawnCells = 0;
-let pCanvasWidth = 0;
-let pCanvasHeight = 0;
-let pCellSize = 0;
-
-function setEssenVariables(Width, Height, Size) {
-    pCanvasHeight = Height;
-    pCanvasWidth = Width;
-    pCellSize = Size;
-}
-
-function getCanvasHeight() { return pCanvasHeight; }
-function getCanvasWidth() { return pCanvasWidth; }
 
 let distVal = 0;
 
-//Makes an array for input in markCells
-//Not used, since exit is now an array, which was not always the case
-// function setArray(cells, cellsArray) {
-//     let updateArray = [];
-//     for (let i = 0; i < cellsArray.length; i++) {
-//         updateArray[i] = cells[cellsArray[i].x / pCellSize][cellsArray[i].y / pCellSize];
-//     }
-//     return updateArray;
-// }
 
-//Recursive function for marking array of cells and counting distance
+/**
+ * Recursive function for marking array of cells and counting distance
+ * @param {cells[]} cells array of cells
+ * @param {cell[]} currentCell array of next cells
+ */
 function markCells(cells, currentCell) {
     let nextNeighbors = [];
     let NeighborArr = [];
@@ -65,7 +52,7 @@ function markCells(cells, currentCell) {
 
             //Get next araray of cells to set distance for
             //Only get direct neighbors
-            NeighborArr = getNeighbors2(cells, currentCell[i]);
+            NeighborArr = getNeighbors4D(cells, currentCell[i]);
 
             //A maximum of 4 neighbors can be found for each cell
             nextNeighbors.push(NeighborArr[0]);
@@ -76,14 +63,19 @@ function markCells(cells, currentCell) {
     }
     distVal += 1;
 
-    //If neighbors are present around current cells, do same procedure on cells
+    //If neighbors are present around current cells, do fsame procedure on cells
     if (nextNeighbors.length !== 0) {
         markCells(cells, nextNeighbors);
     }
 }
 
-//Sets distance value and mark on cell
+/**
+ * Sets distance value and mark on cell
+ * @param {cells[]} cells array of cells
+ * @param {cell[]} currentCell array of cells to set value for
+ */
 function markCellsController(cells, currentCell) {
+    let pCellSize = getCellSize();
     cells[currentCell.x / pCellSize][currentCell.y / pCellSize].value = distVal;
     //drawTxt(cells[currentCell.x / pCellSize][currentCell.y / pCellSize], distVal);
 
@@ -97,8 +89,13 @@ function markCellsController(cells, currentCell) {
     //currentCell.mark = true;
 }
 
-//Get all 8 neighbors
-function getNeighbors(currentCell, cellsArray) {
+/**
+ * Get all of the 8 closest cells, to the selected cell 
+ * @param {cell} currentCell the cell to get the neighbors for 
+ * @param {cells[]} cellsArray an array of all cells in the grid
+ * @returns a struct of the closest cells
+ */
+function getNeighbors8D(currentCell, cellsArray) {
     let neighbors = { N: null, S: null, E: null, W: null, NE: null, NW: null, SE: null, SW: null };
     let index = getCellIndex(currentCell.x, currentCell.y);
     // Find north
@@ -132,10 +129,15 @@ function getNeighbors(currentCell, cellsArray) {
     return neighbors;
 }
 
-
-//Get only direct neighbors of cell, adds them to array
-function getNeighbors2(cells, currentCell) {
+/**
+ * Gets only direct neighbors of cell
+ * @param {[cells]} cells an array of all cells in the grid
+ * @param {cell} currentCell the cell to find the neighbors for 
+ * @returns an array of the 4 closest cells
+ */
+function getNeighbors4D(cells, currentCell) {
     let newCurrentCell = [];
+    let pCellSize = getCellSize();
     if (currentCell.x != 0) {
         newCurrentCell[0] = cells[(currentCell.x / pCellSize) - 1][currentCell.y / pCellSize];
         if (newCurrentCell[0] === undefined) {
@@ -169,14 +171,17 @@ function getNeighbors2(cells, currentCell) {
     return newCurrentCell;
 }
 
-//Calculate vectors of cells depending on lowest value neighbor
+/**
+ * Calculate vectors of cells depending on lowest value neighbor
+ * @param {cells[]} cells array of cells
+ */
 function calculateVectors(cells) {
     cells.forEach(column => {
         for (let cell of column) {
             if (cell.value === 0 || cell.isWall === true) {
                 continue;
             }
-            let neighbors = getNeighbors(cell, cells);
+            let neighbors = getNeighbors8D(cell, cells);
 
             if (neighbors.N && neighbors.N.isWall) {
                 neighbors.NE = null
@@ -229,4 +234,4 @@ function calculateVectors(cells) {
 
 
 
-export { setEssenVariables, perfMeasure, getCanvasHeight, getCanvasWidth, getNeighbors2 };
+export { perfMeasure };

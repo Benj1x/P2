@@ -1,9 +1,8 @@
 export {
-    createGrid, getCellIndex, cellEventHandler, clearCanvas, cellSize, setAddingExit, setAddingSpawn, getAddingExit,
-    getAddingSpawn, endPoint, setExits, startPoint, prevExit, svgNS, getCells, drawTxt, getCell, getNeighborCells, getAgentsInCell, calcCellDensity, getHighestCellDensity, showLiveHeat,
-    setShowHeatMap, getShowHeatMap, loadCells, DrawAllCells, setBlockMouse, getBlockMouse, setCellSize, resetHeatmap, resetGrid, resetEndpoint, resetVectors
+    createGrid, getCellIndex, cellEventHandler, cellSize, setAddingExit, setAddingSpawn, getAddingExit,
+    getAddingSpawn, endPoint, setExits, startPoint, prevExit, svgNS, getCells, getCell, getAgentsInCell, calcCellDensity, getHighestCellDensity, showLiveHeat,
+    setShowHeatMap, getShowHeatMap, loadCells, DrawAllCells, setBlockMouse, getBlockMouse, setCellSize, resetHeatmap, resetGrid, resetEndpoint, resetVectors, getCellSize
 }
-import { getAgents } from "./agents.js";
 //import { sizeChange } from "../script.js";
 
 //Custom cell size
@@ -128,7 +127,13 @@ function resetVectors() {
                 cell.value = 0;
                 cell.dVector.x = 0;
                 cell.dVector.y = 0;
+                cell.vectorX = 0;
+                cell.vectorY = 0;
+                cell.dVector = { x: 0, y: 0 };
+                cell.agents = [],
+                cell.highestDensity = 0;
             }
+
         });
     });
 }
@@ -211,7 +216,10 @@ function resetGrid() {
             cells[x][y].value = 0;
             cells[x][y].vectorX = 0;
             cells[x][y].vectorY = 0;
+            cells[x][y].dVector.x = 0;
+            cells[x][y].dVector.y = 0;
             cells[x][y].dVector = { x: 0, y: 0 };
+
             //Collision and heatmap
             cells[x][y].agents = [],
                 cells[x][y].highestDensity = 0;
@@ -229,6 +237,10 @@ function resetVectorsComplete() {
             cells[x][y].dVector = { x: 0, y: 0 };
             cells[x][y].agents = [],
             cells[x][y].highestDensity = 0;
+            cells[x][y].rect.setAttribute('fill', 'white');
+            cells[x][y].agents = [],
+            cells[x][y].highestDensity = 0;
+
         };
     }
 }
@@ -262,6 +274,11 @@ function DrawAllCells() {
     }
 }
 
+/**
+ * 
+ * @param {cells[]} newCells 
+ * @param {int} newCellSize 
+ */
 function loadCells(newCells, newCellSize) {
     let canvasWidth = window.innerWidth - window.innerWidth % cellSize;
     let canvasHeight = window.innerHeight - window.innerHeight % cellSize;
@@ -277,12 +294,15 @@ function loadCells(newCells, newCellSize) {
     DrawAllCells();
 }
 
+/** 
+ * @returns {cells[]} All cells
+*/
 function getCells() { return cells; }
 
 /** 
  * @param {int} x The X position of the cell to find
  * @param {int} y The Y position of the cell to find
- * @returns {cells} the cell we found
+ * @returns {cells} The cell that has been found
 */
 function getCell(x, y) { return cells[x][y]; }
 
@@ -337,9 +357,8 @@ function showLiveHeat(cellsToUpdate) {
             cell.rect.setAttribute('y', cell.y);
             cell.rect.setAttribute('stroke', 'black');
 
-            //cell.rect.classList.toggle("cellClass");
+            //Scaler for maximum agent density on cell
 
-            //Scalar for maximum agent density on cell
             const scaler = 36; //255 / 7 = 36.4, we round down, and now we have a scaler for our cells (any value over 7 is bad);
 
             let r = 255;
@@ -435,8 +454,26 @@ function resetHeatmap() {
     setShowHeatMap(show);
 }
 
+/**
+ * @returns {boolean} if the heatmap is being displayed or not
+ */
 function getShowHeatMap() { return showHeatMap; }
+
+/**
+ * @returns {int} value the size of the cells on the grid
+ */
+function getCellSize(){ return cellSize;}
+
+/**
+ * 
+ * @param {int} value the new size of the cells on the grid
+ */
 function setCellSize(value) { cellSize = value }
+
+/**
+ * 
+ * @param {cell} exits 
+ */
 function setExits(exits) { endPoint = exits }
 
 function getBlockMouse() { return shouldIgnoreMouse; }

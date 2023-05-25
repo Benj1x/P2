@@ -1,5 +1,5 @@
-export { populate, removeAgentsFromArea, animateCaller, getSpawnAreas, addSpawnArea, setSizes, setSpawnAreas, getAgents, updateAgentColors}
-import { simButton, colorPicker} from '../script.js';
+export { populate, animateCaller, getSpawnAreas, addSpawnArea, setSizes, setSpawnAreas, getAgents}
+import { simButton} from '../script.js';
 import { cellSize, svgNS, getCells, getCell, endPoint, calcCellDensity, showLiveHeat, getShowHeatMap, setBlockMouse } from './cells.js'
 import { calculateVectors } from './pathfinding.js'
 import { updateFPSCounter } from './utils.js'
@@ -206,20 +206,20 @@ function populate() {
 function populateCells(area, agentsPerArea, minAgentDistance) {
     let firstCell = area[area.length - 1];
     let lastCell = area[0];
-    let fattiness = ((cellSize / 6) + Math.floor(Math.random() * 3));
+    let fattiness = ((cellSize / 6) + Math.floor(Math.random() * (cellSize / 6)));
 
     //increase the padding to ensure agents are not placed too close to the border
     let padding = minAgentDistance;
     //add a limit to the number of tries
-    let maxTries = 100;
+    let maxTries = 100; 
 
     for (let i = 0; i < agentsPerArea; ++i) {
         let validPosition = false;
         let x, y;
         //initialize tries counter
-        let tries = 0;
+        let tries = 0; 
         //add tries limit to the condition
-        while (!validPosition && tries < maxTries) {
+        while (!validPosition && tries < maxTries) { 
             x = getRandomArbitrary(firstCell.x * cellSize + fattiness + padding, lastCell.x * cellSize + Math.floor(cellSize) - fattiness - padding);
             y = getRandomArbitrary(firstCell.y * cellSize + fattiness + padding, lastCell.y * cellSize + Math.floor(cellSize) - fattiness - padding);
             validPosition = checkAgentDistance(x, y, minAgentDistance);
@@ -270,7 +270,7 @@ function spawnExceededAgents() {
         if (exceededAgents <= 0) {
             break;
         }
-    }
+    } 
 }
 
 //Getting position within spawn area
@@ -389,13 +389,18 @@ function animate(start) {
                     agents[i].destroy();
                 }
             });
+            // if (getCell(x, y) == endPoint) {
+            //     agents[i].destroy();
+            // }
+
+
         }
         i++;
     }
 
     if (exceededAgents > 0) {
         spawnExceededAgents();
-        updateAgentColors(colorPicker.value);
+        //updateAgentColors(colorPicker.value);
     }
 
     let end = performance.now();
@@ -439,31 +444,32 @@ async function animateCaller() {
     return;
 }
 
-function removeAgentsFromArea(area, agentsToRemovePerArea, drawingArea) {
-    let removedAgents = 0;
-    let agentsInArea = agents.filter(agent => {
-        return area.some(cell => {
-            return cell.x === Math.floor(agent.x / cellSize) && cell.y === Math.floor(agent.y / cellSize);
-        });
-    });
 
-    let totalAgentsInArea = agentsInArea.length;
-    let agentsToRemove = Math.min(agentsToRemovePerArea, totalAgentsInArea);
-    let agentsToKeep = [];
+// function removeAgentsFromArea(area, agentsToRemovePerArea, drawingArea) {
+//     let removedAgents = 0;
+//     let agentsInArea = agents.filter(agent => {
+//         return area.some(cell => {
+//             return cell.x === Math.floor(agent.x / cellSize) && cell.y === Math.floor(agent.y / cellSize);
+//         });
+//     });
 
-    for (let i = 0; i < agents.length; i++) {
-        if (agentsToRemove > 0 && agentsInArea.includes(agents[i])) {
-            drawingArea.removeChild(agents[i].body);
-            removedAgents++;
-            agentsToRemove--;
-        } else {
-            agentsToKeep.push(agents[i]);
-        }
-    }
+//     let totalAgentsInArea = agentsInArea.length;
+//     let agentsToRemove = Math.min(agentsToRemovePerArea, totalAgentsInArea);
+//     let agentsToKeep = [];
 
-    agents = agentsToKeep;
-    return removedAgents;
-}
+//     for (let i = 0; i < agents.length; i++) {
+//         if (agentsToRemove > 0 && agentsInArea.includes(agents[i])) {
+//             drawingArea.removeChild(agents[i].body);
+//             removedAgents++;
+//             agentsToRemove--;
+//         } else {
+//             agentsToKeep.push(agents[i]);
+//         }
+//     }
+
+//     agents = agentsToKeep;
+//     return removedAgents;
+// }
 
 function addSpawnArea(spawnGroup) { spawnAreas.push(spawnGroup); }
 function setSpawnAreas(newAreas) { spawnAreas = newAreas; }

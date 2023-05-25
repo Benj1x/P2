@@ -2,6 +2,11 @@ import { loadCells, setExits } from './cells.js';
 import { setSpawnAreas } from './agents.js';
 export { saveDesign, loadDesign, getAllDesignNames, removeDesign };
 
+/**
+ * 
+ * @param {string} userCookie 
+ * @returns savedDesigns  
+ */
 async function getAllDesignNames(userCookie) {
     let savedDesigns = [];
     let response = await fetch("/getdesignnames", {
@@ -18,6 +23,14 @@ async function getAllDesignNames(userCookie) {
     return savedDesigns;
 }
 
+/**
+ * 
+ * @param {string} userCookie 
+ * @param {cells[]} cells 
+ * @param {spawnAreas[]} spawnAreas 
+ * @param {string} name 
+ * @param {int} cellSize 
+ */
 async function saveDesign(userCookie, cells, spawnAreas, name, cellSize) {
     const design = {
         userCookie: userCookie,
@@ -41,6 +54,11 @@ async function saveDesign(userCookie, cells, spawnAreas, name, cellSize) {
         }
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @param {string} userCookie 
+ */
 async function removeDesign(name, userCookie) {
     await fetch("/removedesign", {
         method: "DELETE",
@@ -52,6 +70,11 @@ async function removeDesign(name, userCookie) {
     })
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @param {string} userCookie 
+ */
 async function loadDesign(name, userCookie){
     let response = await fetch("/getdesign", {
         method: "GET",
